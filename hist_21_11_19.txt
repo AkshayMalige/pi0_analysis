@@ -1,0 +1,500 @@
+  225  cd outputs/rho_dst/out/
+  226  ll
+  227  cat rho_288.root.log 
+  228  cd ../../../../
+  229  cd dst/
+  230  ll
+  231  cat analysisDST.cc
+  232  xfte analysisDST.cc &
+  233  make
+  234  . sendScript_SL.sh
+  235  squeue -u amalige
+  236  cd outputs/rho_dst/
+  237  ll
+  238  squeue -u amalige
+  239  SL_mon.pl 
+  240  squeue -u amalige
+  241  SL_mon.pl 
+  242  squeue -u amalige
+  243  SL_mon.pl 
+  244  squeue -u amalige
+  245  ll
+  246  cd ../
+  247  ls -ltrh
+  248  vim ~/.bashrc
+  249  lll
+  250  vim ~/.bashrc
+  251  bash
+  252  lll
+  253  cd rho_dst/
+  254  lll
+  255  root -l rho_016_dst_pimp.root 
+  256  . ../../../hgeant/geant_input/profile.sh 
+  257  root -l rho_016_dst_pimp.root 
+  258  lll
+  259  rl
+  260  cd ../../../../TEST/
+  261  ll
+  262  cat sendScript_SL.sh 
+  263  xfte sendScript_SL.sh &
+  264  pc
+  265  ll
+  266  cd TEST/
+  267  . set64.sh 
+  268  SL_mon.pl 
+  269  kr
+  270  pf
+  271  pc
+  272  pl
+  273  ll
+  274  cd TEST/
+  275  ll
+  276  lll
+  277  cd RHO/
+  278  ls
+  279  ls rho_* > ch1_rho.list
+  280  cat ch1_rho.list 
+  281  pc
+  282  lll
+  283  cd TEST/
+  284  . set64.sh 
+  285  SL_mon.pl 
+  286  kr
+  287  pc
+  288  cd TEST/
+  289  ll
+  290  cd ..
+  291  cd PIMP_simul/hgeant/hgeant_out/
+  292  ll
+  293  cd rho_out/
+  294  ll
+  295  root -l rho_99.root 
+  296  ifconfig
+  297  pc
+  298  cd TEST/
+  299  . set64.sh 
+  300  SL_mon.pl 
+  301  kr
+  302  pc
+  303  cd TEST/
+  304  kr
+  305  pc
+  306  cd TEST/
+  307  cd ../
+  308  cd PIMP_simul/hgeant/geant_input/
+  309  ll
+  310  . profile.sh 
+  311  SL_mon.pl 
+  312  ls
+  313  cd input/
+  314  ll
+  315  cd ../
+  316  xfte input_maker_PC.sh
+  317  xfte input_maker_PC.sh &
+  318  cd ../
+  319  cd ../../TEST/RHO/
+  320  ll
+  321  kr
+  322  pc
+  323  cd PIMP_simul/hgeant/geant_input/
+  324  ls
+  325  xfte input_maker_PC.sh
+  326  vim input_maker_PC.sh &
+  327  vim input_maker_PC.sh 
+  328  kr
+  329  pc
+  330  cd TEST/
+  331  . set64.sh 
+  332  SL_mon.pl 
+  333  squeue -u amalige
+  334  pc
+  335  cd TEST/RHO/
+  336  ls ch1*
+  337  ls
+  338  rm rho.list 
+  339  pc
+  340  cd PIMP_simul/hgeant/geant_input/
+  341  xfte input_maker_PC.sh
+  342  cd ../../
+  343  ll
+  344  cd hgeant/geant_input/
+  345  . profile.sh 
+  346  ls
+  347  . input_maker_PC.sh
+  348  ll
+  349  cat rho_9.dat 
+  350  ls
+  351  xfte sendScript_SL_rl.sh &
+  352  cp sendScript_SL_rl.sh sendScript_SL_rl_bckp.sh
+  353  ls
+  354  cd ../hgeant_out/
+  355  ls
+  356  cd rho_out/
+  357  ls
+  358  rm *
+  359  ls
+  360  cd input/
+  361  ll
+  362  cd ../
+  363  rm -r input/
+  364  ls
+  365  cd ../../geant_input/
+  366  ls
+  367  ls rho_* > ch1_rho.list
+  368  ls
+  369  cat ch1_rho.list 
+  370  ls
+  371  . profile.sh 
+  372  SL_mon.pl 
+  373  htop
+  374  ls
+  375  . sendScript_SL_rl.sh
+  376  SL_mon.pl 
+  377  squeue -u amalige
+  378  SL_mon.pl 
+  379  squeue -u amalige
+  380  SL_mon.pl 
+  381  squeue -u amalige
+  382  SL_mon.pl 
+  383  squeue -u amalige
+  384  kr
+  385  pc
+  386  cd TEST/
+  387  ll
+  388  . set64.sh 
+  389  SL_mon.pl 
+  390  squeue -u amalige
+  391  kr
+  392  pc
+  393  cd TEST/
+  394  . set64.sh 
+  395  SL_mon.pl 
+  396  squeue -u amalige
+  397  cd ../PIMP_simul/hgeant/hgeant_out/rho_out/
+  398  ls
+  399  rl
+  400  root -l rho_2010.root 
+  401  kr
+  402  pc
+  403  ls
+  404  cd PIMP_simul/hgeant/geant_input/
+  405  ll
+  406  pc
+  407  cd TEST/
+  408  ll
+  409  kr
+  410  pc
+  411  cd PIMP_simul/hgeant/geant_input/
+  412  vim input_maker_PC.sh
+  413  cat input_maker_PC.sh
+  414  cd ../../../TEST/
+  415  ls
+  416  cd D0_DALITZ/
+  417  ls
+  418  ls D0_dalitz* > Ch2_d0_dalitz.list
+  419  cat Ch2_d0_dalitz.list 
+  420  cd ../../PIMP_simul/hgeant/geant_input/
+  421  vim input_maker_PC.sh
+  422  kr
+  423  pc
+  424  cd TEST/D0_DALITZ/
+  425  ls
+  426  exit
+  427  ll
+  428  . Pluto_carbon.sh
+  429  lll
+  430  kc
+  431  kronos.hpc
+  432  ssh -Y kronos.hpc
+  433  cd /lustre/nyx/hades/user/amalige/
+  434  ll
+  435  cd PIMP_simul/
+  436  ll
+  437  more jobScript_SL.sh 
+  438  ll
+  439  cd hgeant
+  440  ll
+  441  cd input/
+  442  ll
+  443  cd ../
+  444  cd geant_input/
+  445  ll
+  446  cd ../
+  447  ll
+  448  cd ../
+  449  ll
+  450  cd ../
+  451  ll
+  452  cd TEST/
+  453  ll
+  454  more run_pluto 
+  455  more jobScript_SL.sh 
+  456  sudo apt-get install qalculate-gtk
+  457  cd /lustre/nyx/hades/user/shower/Akshay_Malige/
+  458  ll
+  459  exit
+  460  kronos@hpc
+  461  ssh -y kronos@hpc
+  462  ssh -Y kronos@hpc
+  463  ssh -Y kronos.hpc
+  464  exit
+  465  cd /lustre/nyx/hades/user/amalige/Akshay_Malige/
+  466  ll
+  467  clear
+  468  ll
+  469  cd fwdet-simana/
+  470  ll
+  471  cd dst/
+  472  ll
+  473  cd ../
+  474  ll
+  475  cd examples/
+  476  ll
+  477  cat README 
+  478  cd ../
+  479  ll
+  480  cd hists/
+  481  ll
+  482  cd ../../
+  483  cd ../
+  484  ll
+  485  cd TEST/
+  486  ll
+  487  cd N1440/
+  488  ll
+  489  root -l N1440_89.root
+  490  more n1440.list
+  491  ll
+  492  cat n1440.list
+  493  ll
+  494  more N1440_8.evt
+  495  ll
+  496  cd ../
+  497  ll
+  498  emacs pimC_pluto.cc
+  499  exit
+  500  ssh -Y kronos.hpc
+  501  cd /lustre/nyx/hades/user/amalige/Akshay_Malige/
+  502  ll
+  503  cd PIMP_simul/
+  504  ll
+  505  xfte jobScript_SL.sh 
+  506  xfte jobScript_SL.sh &
+  507  xfte sendScript_SL.sh &
+  508  cd ~
+  509  ls
+  510  mkdir march19
+  511  cd march19/
+  512  ls
+  513  mkdir gee
+  514  cd gee
+  515  mkdir gen2
+  516  cd gen2/
+  517  ls
+  518  ls -lrtrh /u/sudol/mar19/dst/diphoton/
+  519  ls /u/sudol/mar19/dst/diphoton/
+  520  ls /u/sudol/mar19/dst/diphoton/gen1/
+  521  ls /u/sudol/mar19/dst/diphoton/gen1/gee/
+  522  cp /u/sudol/mar19/dst/diphoton/gen1/gee/emc_diphoton_ana.cc .
+  523  cp /u/sudol/mar19/dst/diphoton/gen1/gee/sendScript_SL.sh .
+  524  cp /u/sudol/mar19/dst/diphoton/gen1/gee/Makefile .
+  525  cp /u/sudol/mar19/dst/diphoton/gen1/gee/jobScript_SL.sh .
+  526  cp /u/sudol/mar19/dst/diphoton/gen1/gee/fill_ttree_photonEpEm.C .
+  527  xfte emc_diphoton_ana.cc &
+  528  xfte fill_ttree_photonEpEm.C &
+  529  cp /u/sudol/mar19/dst/diphoton/gen1/gee/m2_cut.root .
+  530  root -l 
+  531  more sendScript_SL.sh 
+  532  . /cvmfs/hades.gsi.de/install/5.34.34/hydra2-5.2/defall.sh
+  533  xfte setEnv.sh &
+  534  chmod u=X setEnv.sh 
+  535  chmod u+x setEnv.sh 
+  536  . setEnv.sh 
+  537   setEnv.sh 
+  538  xfte setEnv.sh &
+  539  ls -ltrh
+  540  pwd
+  541  rm setEnv.sh
+  542  xfte setEnv.sh &
+  543  chmod u+x setEnv.sh 
+  544  . setEnv.sh
+  545  root -l 
+  546  ls /cvmfs/hades.gsi.de/install/5.34.34/hydra2-5.2
+  547  cp /cvmfs/hades.gsi.de/install/5.34.34/hydra2-5.2/macros/rootlogon.C .
+  548  root -l 
+  549  ls
+  550  more Makefile
+  551  more emc_diphoton_ana.cc
+  552  make
+  553  cp -r /u/sudol/mar19/dst/pions/gen2/lists/day_* 
+  554  cp -r /u/sudol/mar19/dst/pions/gen2/lists/day_*  .
+  555  ls -ltrh
+  556  mkdir lists
+  557  mv *.list lists/
+  558  ls
+  559  ls lists/
+  560  more lists/day_058_ag158ag_3200A.list
+  561  xfte sendScript_SL.sh  &
+  562  ls jobScript_SL.sh
+  563  whoami
+  564  ls
+  565  . sendScript_SL.sh 058
+  566  . sendScript_SL.sh 059
+  567  . sendScript_SL.sh 060
+  568  . sendScript_SL.sh 061
+  569  . sendScript_SL.sh 062
+  570  ls lists/
+  571  more day_all_ag158ag_3200A.list
+  572  more lists/day_all_ag158ag_3200A.list
+  573  SL_mon.pl 
+  574  queue -u amalige
+  575*  -u amalige
+  576  SL_mon.pl 
+  577  more 
+  578  more sendScript_SL.sh
+  579  cd /lustre/hebe/hades/user/${user}/mar19/gee/
+  580  ls -ltrh
+  581  rm -r day059_gen2 day060_gen2 day061_gen2
+  582  ls day058_gen2
+  583  ls day058_gen2/out/
+  584  SL_mon.pl 
+  585  ll
+  586  cd ../
+  587  ll
+  588  cd ~/
+  589  ls
+  590  cd march19/
+  591  ls
+  592  cd gee/
+  593  ls
+  594  cd gen2/
+  595  ls
+  596  more sendScript_SL.sh
+  597  cd /lustre/hebe/hades/user/${user}/mar19/gee/day058_gen2/
+  598  ls
+  599  cd -
+  600  SL_mon.pl 
+  601  squeue -u amalige
+  602  SL_mon.pl 
+  603  ll
+  604  cat jobScript_SL.sh 
+  605  ll
+  606  cd
+  607  ll
+  608  cd march19/gee/gen2/
+  609  ll
+  610  cd ../
+  611  ll
+  612  SL_mon.pl 
+  613  locate out
+  614  ll
+  615  ls
+  616  cd gen2/
+  617  ll
+  618  SL_mon.pl 
+  619  squeue -u amalige
+  620  SL_mon.pl 
+  621  cd /lustre/hebe/hades/user/${user}/mar19/gee/
+  622  ll
+  623  SL_mon.pl 
+  624  ll
+  625  SL_mon.pl 
+  626* ll
+  627  cd day058_gen2/
+  628  ll
+  629  cd out/
+  630  ll
+  631  cd ../
+  632  ll
+  633  ls -ltrh
+  634  root -l march19_058_1.root
+  635  ls -ltrh
+  636  SL_mon.pl 
+  637  squeue -u amalige
+  638  ll
+  639  ls -ltrh
+  640  root -l march19_058_1.root 
+  641  root -l march19_058_4.root 
+  642  cd out/
+  643  ll
+  644  cat march19_058_2.log 
+  645  ll
+  646  squeue -u amalige
+  647  SL_mon.pl 
+  648  ll
+  649  cd ../
+  650  ll
+  651  root -l march19_058_1.root
+  652  SL_mon.pl 
+  653  squeue -u amalige
+  654  SL_mon.pl 
+  655  squeue -u amalige
+  656  ls -ltrh out/
+  657  ls
+  658  hadd.pl gee_day058.root *.root 
+  659* 
+  660  rm gee_day058.root 
+  661  hadd.pl gee_day058.root march19_058_1.root march19_058_2.root march19_058_3.root march19_058_4.root march19_058_5.root
+  662  ls 
+  663  rm -r gee_day058.root
+  664  ls -ltrh
+  665  ls -lthr out/
+  666  ls
+  667  hadd ala.root march19_058_4.root march19_058_5.root
+  668  rm ala.root
+  669  hadd gee_day058.root march19_058_1.root  march19_058_2.root march19_058_3.root march19_058_4.root march19_058_5.root
+  670  ls -ltrh
+  671  root -l gee_day058.root
+  672  cd -
+  673  cd ~/march19/gee/gen2/
+  674  ls
+  675  ls lists/
+  676  . sendScript_SL.sh 063
+  677  . sendScript_SL.sh 064
+  678  . sendScript_SL.sh 065
+  679  . sendScript_SL.sh 066
+  680  . sendScript_SL.sh 067
+  681  . sendScript_SL.sh 068
+  682  . sendScript_SL.sh 069
+  683  . sendScript_SL.sh 070
+  684  cd -
+  685  cd ../../
+  686  ls
+  687  cd -
+  688  cd ~/march19/
+  689  ls
+  690  cd gee/
+  691  ls
+  692  cd gen2/
+  693  ls
+  694  ls lists/
+  695  ls /u/sudol/mar19/
+  696  ls /u/sudol/mar19/dst/
+  697  ls /u/sudol/mar19/dst/diphoton/gen1/gee/
+  698  ls /u/sudol/mar19/dst/diphoton/gen1/gee/*.C
+  699  cp /u/sudol/mar19/dst/diphoton/gen1/gee/plot_mass_gee.C .
+  700  xfte plot_mass_gee.C &
+  701  ls
+  702  ls -ltrh
+  703  cd -
+  704* ls -ltrh /lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root 
+  705  ls -ltrh
+  706  root -l 'plot_mass_gee.C("/lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root","plots_day058.root")'
+  707  more /u/sudol/mar19/dst/diphoton/gen1/gee/plot_mass.C~ 
+  708  root -l 'plot_mass_gee.C("/lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root","plots_day058.root")'
+  709  root -l 'plot_mass_gee.C++g("/lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root","plots_day058.root")'
+  710  ls -ltrh
+  711  root -l diphoton_massEXP_gen2.root
+  712  ls -ltrh
+  713  root -l /lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root
+  714  root -l diphoton_massEXP_gen2.root
+  715  ls
+  716  xfte fill_ttree_photonEpEm.C ^
+  717  bg
+  718  root -l 'plot_mass_gee.C++g("/lustre/hebe/hades/user/amalige/mar19/gee/day058_gen2/gee_day058.root","plots_day058.root")'
+  719  ls -ltrh
+  720  root -l diphoton_massEXP_gen2.root
+  721  ls -ltrh
+  722  pwd
+  723  SL_mon.pl 
+  724  history >> hist_21_11_19.txt
