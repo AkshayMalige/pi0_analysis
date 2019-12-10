@@ -1,5 +1,3 @@
-
-
 #include "TTree.h"
 #include "TChain.h"
 #include "TMath.h"
@@ -85,43 +83,119 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 
 
-    Int_t ptbins = 20.; // for pi0 reduced
-    Int_t ptmin  = 0;
+    Int_t ptbins = 12.; // for pi0 reduced
+    Int_t ptmin  = 200;
     Int_t ptmax  = 800;
 
     //Int_t ybins    = 15.; // for eta
-    Int_t ybins    = 20.; // for pi0
-    Double_t ymin  = 0.;  //0.015
-    Double_t ymax  = 3.;  //2.015
+    Int_t ybins    = 8.; // for pi0
+    Double_t ymin  = 0.4;  //0.015
+    Double_t ymax  = 2.;  //2.015
     Double_t deltay = 0.2;
 
     Double_t PtBinSize = (ptmax-ptmin)/ptbins; // MeV/bin
     Double_t YBinSize  = (ymax-ymin)/ybins;  // rapidity/bin
 
-    Int_t massbins = 40;
+    Int_t massbins = 60;
     Int_t massmin  = 0;
-    Int_t massmax  = 800;
+    Int_t massmax  = 600;
+
+    TH2F*  hAll_ptGEP_GEPmass_Less2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_ptGEP_GEPmass_More2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_yGEP_GEPmass_Less2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_yGEP_GEPmass_More2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_ptGEP_yGEP_Less2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_ptGEP_yGEP_More2Deg[2];// [0] : 30-50%, [1] : 10-30%
+
+    TH2F*  hAll_massGEP_yGEP_Less2Deg[2];// [0] : 30-50%, [1] : 10-30%
+    TH2F*  hAll_massGEP_yGEP_More2Deg[2];// [0] : 30-50%, [1] : 10-30%
+
+    for(Int_t i=0; i<2; i++){
+	hAll_ptGEP_GEPmass_Less2Deg[i] =  new TH2F ( Form("hAll_ptGEP_GEPmass_Less2Deg_cent%i",i) , Form("hAll_ptGEP_GEPmass_Less2Deg_cent%i;M_{#gamma e^{+}e^{-}} [MeV/c^];p_{t}",i),massbins,massmin,massmax,ptbins,ptmin,ptmax);
+	hAll_ptGEP_GEPmass_More2Deg[i] =  new TH2F ( Form("hAll_ptGEP_GEPmass_More2Deg_cent%i",i) , Form("hAll_ptGEP_GEPmass_More2Deg_cent%i;M_{#gamma e^{+}e^{-}} [MeV/c^];p_{t}",i),massbins,massmin,massmax,ptbins,ptmin,ptmax);
+	hAll_yGEP_GEPmass_Less2Deg[i] =  new TH2F ( Form("hAll_yGEP_GEPmass_Less2Deg_cent%i",i) , Form("hAll_yGEP_GEPmass_Less2Deg_cent%i;M_{#gamma e^{+}e^{-}} [MeV/c^];y",i),massbins,massmin,massmax,ybins,ymin,ymax);
+	hAll_yGEP_GEPmass_More2Deg[i] =  new TH2F ( Form("hAll_yGEP_GEPmass_More2Deg_cent%i",i) , Form("hAll_yGEP_GEPmass_More2Deg_cent%i;M_{#gamma e^{+}e^{-}} [MeV/c^];y",i),massbins,massmin,massmax,ybins,ymin,ymax);
+	hAll_ptGEP_yGEP_Less2Deg[i] =  new TH2F ( Form("hAll_ptGEP_yGEP_Less2Deg_cent%i",i) , Form("hAll_ptGEP_yGEP_Less2Deg_cent%i;p_{t};y",i),ptbins,ptmin,ptmax,ybins,ymin,ymax);
+	hAll_ptGEP_yGEP_More2Deg[i] =  new TH2F ( Form("hAll_ptGEP_yGEP_More2Deg_cent%i",i) , Form("hAll_ptGEP_yGEP_More2Deg_cent%i;p_{t};y",i),ptbins,ptmin,ptmax,ybins,ymin,ymax);
+    }
+
 
     Int_t YBin=0;
     Int_t PtBin=0;
     TString HistName;
-    TH1F *MassPtY[20][15];
+    TH1F *MassPtY[2][12][13];
+    TH1F *MassPtY_More2[2][12][13];
+    TH1F *MassPtY_Less2[2][12][13];
+
+    TH2F *MassGEP_PtY[2][12][13];
+    TH2F *MassGEP_PtYMore2[2][12][13];
+    TH2F *MassGEP_PtYLess2[2][12][13];
+
+    TH2F *MassGEP_Y[2][12][13];
+    TH2F *MassGEP_YMore2[2][12][13];
+    TH2F *MassGEP_YLess2[2][12][13];
 
 
-    for (Int_t ptindex = 0; ptindex < ptbins; ptindex++)
+    for (Int_t cindex = 0; cindex < 2; cindex++)
     {
-	for (Int_t yindex = 0; yindex < ybins; yindex++)
+	for (Int_t ptindex = 0; ptindex < ptbins; ptindex++)
 	{
-	    HistName = "Mass_pt";
-	    HistName += ptindex;
-	    HistName += "_y";
-	    HistName += yindex;
-	    MassPtY[ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
+	    for (Int_t yindex = 0; yindex < ybins; yindex++)
+	    {
+		HistName = "Mass_pt";
+		HistName += ptindex;
+                HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassPtY[cindex][ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
 
+		HistName = "Mass_More_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassPtY_More2[cindex][ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
+
+		HistName = "Mass_Less_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassPtY_Less2[cindex][ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
+
+        /*        HistName = "ptMassGEP_pt";
+		HistName += ptindex;
+                HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassGEP_PtY[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax);
+
+		HistName = "pt_MoreMassGEP_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassGEP_PtYMore2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax);
+
+		HistName = "pt_LessMassGEP_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		MassGEP_PtYLess2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax); */
+
+	    }
 	}
     }
 
 
+    Int_t centrality2[2][2]=  {{26,56},{56,102}};
 
     for (Long64_t ii = 1; ii <= nentries ; ii++)
     {
@@ -133,11 +207,13 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 	nt.GetEntry(ii);
 
-	if(pid.energyG < 150)                     continue;  // in the tree already 100MeV is applied
-	if(pid.betaG < 0.95 )                     continue;  // to have good selection on gamma
-	if(pid.sizeG !=1)                         continue;  // still only cluster size 1 are calibrated, higer size are not calibrated
+	if(pid.energyG < 200)                    continue;  // in the tree already 100MeV is applied
+	if(pid.betaG < 0.95 )                    continue;  // to have good selection on gamma
+	if(pid.betaG > 1.2 )                     continue;  // to have good selection on gamma
+	if(pid.sizeG !=1)                        continue;  // still only cluster size 1 are calibrated, higer size are not calibrated
 
 	// in ECAL we have only 1,2,4,5;  2 & 4 were well performing
+	// if(!(pid.sectorG ==2)) continue;  // only those 2 sectors are good in ECAL
 	if(!(pid.sectorG ==2 || pid.sectorG ==4)) continue;  // only those 2 sectors are good in ECAL
 
 	hAll_GEPmass_en_mult_noOp->Fill(pid.massGEP,pid.mult_tofrpc);
@@ -145,24 +221,66 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	hAll_yGEP_GEPmass_noOp->Fill(pid.massGEP,pid.yGEP);
 
 
-	if(pid.angleGEP< 10 || pid.angleGEP> 50 ) continue;
+	if(pid.angleGEP< 5 || pid.angleGEP> 60 ) continue;
 	// applying higher energy condition
 
 	hAll_GEPmass_en_mult[0]->Fill(pid.massGEP,pid.mult_tofrpc);
 	hAll_ptGEP_GEPmass[0]->Fill(pid.massGEP,pid.ptGEP);
 	hAll_yGEP_GEPmass[0]->Fill(pid.massGEP,pid.yGEP);
 
+
+
 	if(pid.angleLL<2)
 	{
 	    hAll_GEPmass_en_mult[1]->Fill(pid.massGEP,pid.mult_tofrpc);
 	    hAll_ptGEP_GEPmass[1]->Fill(pid.massGEP,pid.ptGEP);
 	    hAll_yGEP_GEPmass[1]->Fill(pid.massGEP,pid.yGEP);
+	    if(pid.mult_tofrpc > 26 && pid.mult_tofrpc <56)
+	    {
+
+		hAll_ptGEP_GEPmass_Less2Deg[0]->Fill(pid.massGEP,pid.ptGEP);
+		hAll_yGEP_GEPmass_Less2Deg[0]->Fill(pid.massGEP,pid.yGEP);
+		hAll_ptGEP_yGEP_Less2Deg[0]->Fill(pid.ptGEP,pid.yGEP);
+
+
+	    }
+	    else if(pid.mult_tofrpc > 56 && pid.mult_tofrpc <102)
+	    {
+
+		hAll_ptGEP_GEPmass_Less2Deg[1]->Fill(pid.massGEP,pid.ptGEP);
+		hAll_yGEP_GEPmass_Less2Deg[1]->Fill(pid.massGEP,pid.yGEP);
+		hAll_ptGEP_yGEP_Less2Deg[1]->Fill(pid.ptGEP,pid.yGEP);
+
+
+	    }
+
+
 	}
 	if(pid.angleLL>2)
 	{
 	    hAll_GEPmass_en_mult[2]->Fill(pid.massGEP,pid.mult_tofrpc);
 	    hAll_ptGEP_GEPmass[2]->Fill(pid.massGEP,pid.ptGEP);
 	    hAll_yGEP_GEPmass[2]->Fill(pid.massGEP,pid.yGEP);
+
+	    if(pid.mult_tofrpc > 26 && pid.mult_tofrpc <56)
+	    {
+
+		hAll_ptGEP_GEPmass_More2Deg[0]->Fill(pid.massGEP,pid.ptGEP);
+		hAll_yGEP_GEPmass_More2Deg[0]->Fill(pid.massGEP,pid.yGEP);
+		hAll_ptGEP_yGEP_More2Deg[0]->Fill(pid.ptGEP,pid.yGEP);
+
+
+	    }
+	    else if(pid.mult_tofrpc > 56 && pid.mult_tofrpc <102)
+	    {
+
+		hAll_ptGEP_GEPmass_More2Deg[1]->Fill(pid.massGEP,pid.ptGEP);
+		hAll_yGEP_GEPmass_More2Deg[1]->Fill(pid.massGEP,pid.yGEP);
+		hAll_ptGEP_yGEP_More2Deg[1]->Fill(pid.ptGEP,pid.yGEP);
+
+
+	    }
+
 	}
 	if (pid.angleLL>4 )
 	{
@@ -183,7 +301,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 	// here you fill histograms
 
-       // hAll_GEPmassAng_en150_mult->Fill(pid.massGEP,pid.angleGEP);
+	// hAll_GEPmassAng_en150_mult->Fill(pid.massGEP,pid.angleGEP);
 	beta->Fill(pid.momP,pid.betaP);
 	beta->Fill(pid.momE*pid.chargeE,pid.betaE);
 	hAll_BetaGamma->Fill(pid.betaG);
@@ -206,12 +324,21 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	YBin  = (Int_t)((pid.yGEP-ymin)/YBinSize);
 	PtBin = (Int_t)((pid.ptGEP-ptmin)/PtBinSize);
 
-	if(PtBin >= 0 && YBin>=0 && PtBin < ptbins && YBin < ybins) MassPtY[PtBin][YBin]->Fill(pid.massGEP);
+	if(PtBin >= 0 && YBin>=0 && PtBin < ptbins && YBin < ybins) {
+
+	    for(Int_t c=0; c<2; c++)
+	    {
+		if(pid.mult_tofrpc > centrality2[c][0] && pid.mult_tofrpc < centrality2[c][1])
+		{
+		    MassPtY[c][PtBin][YBin]->Fill(pid.massGEP);
+		    if(pid.angleLL < 2 )  MassPtY_Less2[c][PtBin][YBin]->Fill(pid.massGEP);
+		    else                  MassPtY_More2[c][PtBin][YBin]->Fill(pid.massGEP);
 
 
-
+		}
+	    }
+	}
     }
-
     TCanvas * Ct[6];
 
     for (int ct =0 ; ct< 6 ; ct++)
@@ -232,13 +359,13 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	Ct[b]->cd(); // canvas
 
 
-        TLegend* leg = new TLegend ( 0.5,0.7,0.9,0.9 );
-        leg->SetHeader ( "Opening angle condition" );
+	TLegend* leg = new TLegend ( 0.5,0.7,0.9,0.9 );
+	leg->SetHeader ( "Opening angle condition" );
 	leg->SetFillColor ( 1 );
 
 	proj_noOp = (TH1F*) hAll_GEPmass_en_mult_noOp->ProjectionX(Form("cent%i_Nocut",b),centrality_arr[b][0],centrality_arr[b][1]);
-	proj_noOp->Draw();
-        leg->AddEntry (proj_noOp,"No opening angl cndt","lep" );
+       // proj_noOp->Draw();
+	leg->AddEntry (proj_noOp,"No opening angl cndt","lep" );
 
 
 	for (int a =0; a<5; a++)
@@ -254,11 +381,11 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	}
 
 
-	
-        leg->SetFillStyle ( 0 );
+
+	leg->SetFillStyle ( 0 );
 	leg->Draw();
 
-//        Ct[b]->GetYaxis()->SetRangeUser(0,proj_noOp);
+	//        Ct[b]->GetYaxis()->SetRangeUser(0,proj_noOp);
 	Ct[b]->Write();
     }
 
