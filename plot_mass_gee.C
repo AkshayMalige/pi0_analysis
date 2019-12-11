@@ -44,7 +44,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
     cout<<"nentries:  "<<nentries<<endl;
 
-    TFile *out    = new TFile("diphoton_massEXP_gen2_opAng10_50.root","RECREATE");
+    TFile *out    = new TFile("diphoton_massEXP_gen2_opAng5_MIX.root","RECREATE");
     out->cd();
 
     // histogram definition
@@ -59,7 +59,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
     TH2F* hAll_GEPmassyGEP = new TH2F("hAll_GEPmassyGEP",";M_{#gamma e^{+}e^{-}} [MeV/c^];y",1000,0,1000.0,300,0,3);
     TH2F* hAll_GEPmassptGEP = new TH2F("hAll_GEPmassptGEP",";M_{#gamma e^{+}e^{-}} [MeV/c^{2}];p_{t}",1000,0,1000.0,1000,0,1000);
     TH2F* hAll_GEPmassAng_en120_mult = new TH2F("hAll_GEPmassAng_en120_mult",";M_{#gamma e^{+}e^{-}} [MeV/c^{2}];#alpha _{#gamma e^{+} e^{-}}",300,0,600.0,150,0,150);
-    TH2F* hAll_ptGEPyGEP = new TH2F("hAll_ptGEPyGEP",";p_{t} [MeV/c];y",600,200,800.0,8,0.4,2);
+    TH2F* hAll_ptGEPyGEP = new TH2F("hAll_ptGEPyGEP",";p_{t} [MeV/c];y",20,0,1000.0,8,0.4,2);
     TH2F *beta = new TH2F("beta","beta;pxq/|q| (MeV/c);#beta",400,-1000,1000,100,0.8,1.4);
 
     TH2F* hAll_AngGEP_AngLL = new TH2F("hAll_AngGEP_AngLL",";#alpha _{#gamma e^{+} e^{-}};#alpha _{e^{+} e^{-}}",140,0,140,140,0,140);
@@ -83,9 +83,9 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 
 
-    Int_t ptbins = 12.; // for pi0 reduced
-    Int_t ptmin  = 200;
-    Int_t ptmax  = 800;
+    Int_t ptbins = 20.; // for pi0 reduced
+    Int_t ptmin  = 0;
+    Int_t ptmax  = 1000;
 
     //Int_t ybins    = 15.; // for eta
     Int_t ybins    = 8.; // for pi0
@@ -123,18 +123,36 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
     Int_t YBin=0;
     Int_t PtBin=0;
     TString HistName;
-    TH1F *MassPtY[2][12][13];
-    TH1F *MassPtY_More2[2][12][13];
-    TH1F *MassPtY_Less2[2][12][13];
+    TH1F *MassPtY[2][20][13];
+    TH1F *MassPtY_More2[2][20][13];
+    TH1F *MassPtY_Less2[2][20][13];
 
-    TH2F *MassGEP_PtY[2][12][13];
-    TH2F *MassGEP_PtYMore2[2][12][13];
-    TH2F *MassGEP_PtYLess2[2][12][13];
+    TH2F *GEPMass_Pt[2][20][13];
+    TH2F *GEPMass_PtMore2[2][20][13];
+    TH2F *GEPMass_PtLess2[2][20][13];
 
-    TH2F *MassGEP_Y[2][12][13];
-    TH2F *MassGEP_YMore2[2][12][13];
-    TH2F *MassGEP_YLess2[2][12][13];
+    TH2F *GEPMass_Y[2][20][13];
+    TH2F *GEPMass_YMore2[2][20][13];
+    TH2F *GEPMass_YLess2[2][20][13];
 
+
+
+   TH1F*  MassPtY_all[ptbins][ybins] ;
+ 
+
+    for (Int_t ptindex = 0; ptindex < ptbins; ptindex++)
+    {
+	for (Int_t yindex = 0; yindex < ybins; yindex++)
+	{
+	    HistName = "Mass_pt_";
+	    HistName += ptindex;
+	    HistName += "_y";
+	    HistName += yindex;
+	    HistName += "_all";
+	    MassPtY_all[ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
+
+	}
+    }
 
     for (Int_t cindex = 0; cindex < 2; cindex++)
     {
@@ -166,29 +184,53 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 		HistName += cindex;
 		MassPtY_Less2[cindex][ptindex][yindex] = new TH1F(HistName.Data(),HistName.Data(),massbins,massmin,massmax);
 
-        /*        HistName = "ptMassGEP_pt";
+                HistName = "MassGEP_Pt_pt";
 		HistName += ptindex;
                 HistName += "_y";
 		HistName += yindex;
 		HistName += "_c";
 		HistName += cindex;
-		MassGEP_PtY[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax);
+		GEPMass_Pt[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ptbins,ptmax,ptmin);
 
-		HistName = "pt_MoreMassGEP_pt";
+		HistName = "MoreMassGEP_Pt_pt";
 		HistName += ptindex;
 		HistName += "_y";
 		HistName += yindex;
 		HistName += "_c";
 		HistName += cindex;
-		MassGEP_PtYMore2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax);
+		GEPMass_PtMore2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ptbins,ptmax,ptmin);
 
-		HistName = "pt_LessMassGEP_pt";
+		HistName = "LessMassGEP_Pt_pt";
 		HistName += ptindex;
 		HistName += "_y";
 		HistName += yindex;
 		HistName += "_c";
 		HistName += cindex;
-		MassGEP_PtYLess2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),1000,0,1000,massbins,massmin,massmax); */
+		GEPMass_PtLess2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ptbins,ptmax,ptmin);
+
+                HistName = "MassGEP_Y_pt";
+		HistName += ptindex;
+                HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		GEPMass_Y[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ybins,ymax,ymin);
+
+		HistName = "MoreMassGEP_Y_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		GEPMass_YMore2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ybins,ymax,ymin);
+
+		HistName = "LessMassGEP_Y_pt";
+		HistName += ptindex;
+		HistName += "_y";
+		HistName += yindex;
+		HistName += "_c";
+		HistName += cindex;
+		GEPMass_YLess2[cindex][ptindex][yindex] = new TH2F(HistName.Data(),HistName.Data(),massbins,massmin,massmax,ybins,ymax,ymin);
 
 	    }
 	}
@@ -221,7 +263,8 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	hAll_yGEP_GEPmass_noOp->Fill(pid.massGEP,pid.yGEP);
 
 
-	if(pid.angleGEP< 5 || pid.angleGEP> 60 ) continue;
+	if(pid.angleGEP< 5  ) continue;
+//	if(pid.angleGEP< 5 || pid.angleGEP> 60 ) continue;
 	// applying higher energy condition
 
 	hAll_GEPmass_en_mult[0]->Fill(pid.massGEP,pid.mult_tofrpc);
@@ -297,7 +340,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 	}
 
-	if(pid.mult_tofrpc < 30 || pid.mult_tofrpc>120) continue;
+        if(pid.mult_tofrpc < 30 || pid.mult_tofrpc>120) continue;
 
 	// here you fill histograms
 
@@ -326,14 +369,29 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 	if(PtBin >= 0 && YBin>=0 && PtBin < ptbins && YBin < ybins) {
 
+	    MassPtY_all[PtBin][YBin]->Fill(pid.massGEP);
 	    for(Int_t c=0; c<2; c++)
 	    {
+
+		MassPtY[c][PtBin][YBin]->Fill(pid.massGEP);
+		GEPMass_Pt[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
+		GEPMass_Y[c][PtBin][YBin]->Fill(pid.massGEP,pid.yGEP);
+
+
 		if(pid.mult_tofrpc > centrality2[c][0] && pid.mult_tofrpc < centrality2[c][1])
 		{
-		    MassPtY[c][PtBin][YBin]->Fill(pid.massGEP);
-		    if(pid.angleLL < 2 )  MassPtY_Less2[c][PtBin][YBin]->Fill(pid.massGEP);
-		    else                  MassPtY_More2[c][PtBin][YBin]->Fill(pid.massGEP);
-
+		    if(pid.angleLL < 2 )
+		    {
+			MassPtY_Less2[c][PtBin][YBin]->Fill(pid.massGEP);
+			GEPMass_PtLess2[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
+                        GEPMass_YLess2[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
+		    }
+		    else
+		    {
+			MassPtY_More2[c][PtBin][YBin]->Fill(pid.massGEP);
+			GEPMass_PtMore2[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
+                        GEPMass_YMore2[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
+		    }
 
 		}
 	    }
