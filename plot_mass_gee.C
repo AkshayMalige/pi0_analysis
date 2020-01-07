@@ -44,7 +44,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
     cout<<"nentries:  "<<nentries<<endl;
 
-    TFile *out    = new TFile("diphoton_massEXP_gen2_opAng5_MIX.root","RECREATE");
+    TFile *out    = new TFile("diphoton_massEXP_gen2_opAng5_C10_50_MIX.root","RECREATE");
     out->cd();
 
     // histogram definition
@@ -271,8 +271,6 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 	hAll_ptGEP_GEPmass[0]->Fill(pid.massGEP,pid.ptGEP);
 	hAll_yGEP_GEPmass[0]->Fill(pid.massGEP,pid.yGEP);
 
-
-
 	if(pid.angleLL<2)
 	{
 	    hAll_GEPmass_en_mult[1]->Fill(pid.massGEP,pid.mult_tofrpc);
@@ -287,7 +285,7 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 
 	    }
-	    else if(pid.mult_tofrpc > 56 && pid.mult_tofrpc <102)
+	    else if(pid.mult_tofrpc > 26 && pid.mult_tofrpc <102)
 	    {
 
 		hAll_ptGEP_GEPmass_Less2Deg[1]->Fill(pid.massGEP,pid.ptGEP);
@@ -340,7 +338,8 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 
 	}
 
-        if(pid.mult_tofrpc < 30 || pid.mult_tofrpc>120) continue;
+        if(pid.mult_tofrpc < 26 || pid.mult_tofrpc > 102) continue;
+	//        if(pid.mult_tofrpc < 26 || pid.mult_tofrpc > 102) continue;
 
 	// here you fill histograms
 
@@ -378,8 +377,8 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
 		GEPMass_Y[c][PtBin][YBin]->Fill(pid.massGEP,pid.yGEP);
 
 
-		if(pid.mult_tofrpc > centrality2[c][0] && pid.mult_tofrpc < centrality2[c][1])
-		{
+	     //   if(pid.mult_tofrpc > centrality2[c][0] && pid.mult_tofrpc < centrality2[c][1])
+	     //   {
 		    if(pid.angleLL < 2 )
 		    {
 			MassPtY_Less2[c][PtBin][YBin]->Fill(pid.massGEP);
@@ -393,10 +392,11 @@ void plot_mass_gee(TString inFile, TString outputFile, Int_t nev=1000., Bool_t u
                         GEPMass_YMore2[c][PtBin][YBin]->Fill(pid.massGEP,pid.ptGEP);
 		    }
 
-		}
+	      //  }
 	    }
 	}
     }
+
     TCanvas * Ct[6];
 
     for (int ct =0 ; ct< 6 ; ct++)
