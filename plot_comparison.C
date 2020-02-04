@@ -255,8 +255,13 @@ void plot_comparison()
     Double_t sig_binMax=0.;
     Double_t sig_count=0.;
     Double_t sig_peak=0;
+    Double_t sig_gaus_3sig_min=0;
+    Double_t sig_gaus_3sig_max=0;
 
     TCanvas *canPtY_all[8];
+
+    TF1* fh = new TF1("fh", "gaus",  100, 200);
+
     for(Int_t i=0; i<8; i++) // rapidity
     {
 
@@ -282,12 +287,25 @@ void plot_comparison()
 	    MassPtY_sig[j][i]->Draw("same");
 	    setOPT_text(Form("#it{p_{t} %.0f-%.0f }",(j*PtBinSize),(((j+1)*PtBinSize))) ,0.5,0.9,0.9,0.999,1,0.2);
 
-            sig_peak = MassPtY_sig[j][i]->GetMaximumBin();
+	    MassPtY_sig[j][i]->Fit(fh,"RQ");
+	  //  cout<<fh->GetParameter(1)<<"\t"<<fh->GetParameter(2)<<endl;
+	    sig_gaus_3sig_min = fh->GetParameter(1) - (3 * fh->GetParameter(2)) ;
+	    sig_gaus_3sig_max = fh->GetParameter(1) + (3 * fh->GetParameter(2)) ;
 
-	    sig_binMin = MassPtY_sig[j][i]->FindBin(100);
-	    sig_binMax = MassPtY_sig[j][i]->FindBin(200);
+	    sig_peak = MassPtY_sig[j][i]->GetMaximumBin();
 
-	    sig_count =   MassPtY_sig[j][i]->Integral(sig_peak-3,sig_peak+3);
+	  //  sig_binMin = MassPtY_sig[j][i]->FindBin(100);
+	    //   sig_binMax = MassPtY_sig[j][i]->FindBin(200);
+
+	    sig_binMin = MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_min);
+	    sig_binMax = MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_max);
+
+         //   cout<<sig_peak<<"\t\t"<<sig_binMin <<"\t\t"<<sig_binMax<<"\t"<<MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_min)<<"\t"<<MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_max)<<endl;
+
+	   // sig_count =   MassPtY_sig[j][i]->Integral(sig_peak-3,sig_peak+3);
+
+	    sig_count =   MassPtY_sig[j][i]->Integral(sig_binMin,sig_binMax);
+
 
 	    if (sig_count>0)
 	    {
@@ -296,6 +314,8 @@ void plot_comparison()
 	    else             PtY_sig->SetBinContent(j+1,i+1,0);
 	}
     }
+
+// PtY_sig->RebinX(2);
 
     Double_t sig_more_binMin=0.;
     Double_t sig_more_binMax=0.;
@@ -342,11 +362,40 @@ void plot_comparison()
 	}
     }
 
-  // drawStyle();
+    TH1F * proj_sig;
+    TCanvas* can_proj_sig= new TCanvas("pi_sig_proj","pi_sig_proj") ;
 
-   // gStyle->SetOptTitle(0);
+    can_proj_sig->cd();
+ //   proj_sig = (TH1F*)PtY_sig->ProjectionX(Form("Bin0",0),0,0+1);
+ //   proj_sig->Draw("APL");
+    const EColor colours[] = {kBlue,kRed,kGreen,kBlack,kTeal,kOrange,kPink,kYellow};
+
+    TLegend* leg = new TLegend ( 0.5,0.7,0.9,0.9 );
+    leg->SetHeader ( "Rapidity Y" );
+    leg->SetFillColor ( 1 );
+
+    Double_t Y_firstbin = 0.4;
+
+    for (Int_t a=0; a<8; a++)
+    {
+	proj_sig = (TH1F*)PtY_sig->ProjectionX(Form("Bin%i",a),a,a+1);
+        proj_sig->GetXaxis()->SetRangeUser(0,8000);
+	proj_sig->Draw("PL,same");
+	proj_sig->SetLineColor(colours[a]);
+	proj_sig->SetLineWidth(2);
+	leg->AddEntry (proj_sig,Form("Y %.2f-%.2f",Y_firstbin,Y_firstbin+0.2),"lep" );
+        Y_firstbin=Y_firstbin+0.2;
+
+    }
+    leg->SetFillStyle ( 0 );
+    leg->Draw();
+  //  can_proj_sig->GetXaxis()->SetRangeUser(0,8000);
+
+    gStyle->SetPaintTextFormat("4.0f");
+
 
     out->cd();
+    can_proj_sig->Write();
     out->GetList()->Write();
 
     for (Int_t a=0; a<2; a++){
