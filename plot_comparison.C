@@ -27,7 +27,54 @@
 #include "TH2F.h"
 #include "TH3F.h"
 #include "TLine.h"
+#include "TText.h"
+#include <string>
 #include "/u/sudol/unigen/v2.1/drawStyle.C"
+
+using namespace std;
+
+void daraw_sig_stats(TH2F* PtY_sig,Int_t sig_gaus_peak[8][20],Int_t sig_gaus_sigma[8][20],char can_name[8])
+{
+    TCanvas * sig_can = new TCanvas(can_name,can_name);
+    sig_can->cd();
+    PtY_sig->Draw("colztexte");
+    TText* te = new TText();
+    te->SetTextFont(43);
+    te->SetTextSize(18);
+    for(Int_t i=0; i<8; i++)
+    {
+        int count = 0;
+	for(Int_t j=0; j< 10; j++)
+	{
+            
+	    int p =  (sig_gaus_peak[i][count]+sig_gaus_peak[i][count+1]) /2;
+	    int s =  (sig_gaus_sigma[i][count]+sig_gaus_sigma[i][count+1]) /2;
+
+	    char val_p[3];
+	    sprintf(val_p,"(%d , %d)",p,s);
+	 //   char val_s[3];
+	  //  sprintf(val_s,"%d",s);
+
+	    //  te->DrawText(PtY_sig->GetXaxis()->GetBinCenter(count)+60,PtY_sig->GetYaxis()->GetBinCenter(i)+0.17,val_p);
+          //  cout<<p<<endl;
+	    if ( (p > 120 && p < 160) )
+	    {
+
+		te->DrawText(PtY_sig->GetXaxis()->GetBinCenter(count)+40,PtY_sig->GetYaxis()->GetBinCenter(i)+0.12,val_p);
+	    }
+
+            count = count+2;
+
+	    //cout<<i<<"\t"<<j/2<<endl;
+	}
+
+    }
+
+    delete te;
+    PtY_sig->RebinX(2);
+
+    sig_can->Write();
+}
 
 void plot_comparison()
 {
@@ -135,7 +182,6 @@ void plot_comparison()
 		MassPtY_sig[pt][y]->SetLineWidth(2);
                 MassPtY_sig[pt][y]->SetMarkerColor(kRed);
                 MassPtY_sig[pt][y]->Sumw2();
-
 
 	    }
 	}
@@ -260,6 +306,9 @@ void plot_comparison()
 
     TCanvas *canPtY_all[8];
 
+    Int_t sig_gaus_peak[8][20];
+    Int_t sig_gaus_sigma[8][20];
+
     TF1* fh = new TF1("fh", "gaus",  100, 200);
 
     for(Int_t i=0; i<8; i++) // rapidity
@@ -271,11 +320,16 @@ void plot_comparison()
 	{
 
 	    canPtY_all[i]->cd(j+1);
+            //canPtY_all[i]->GetYaxis()->SetRangeUser(-100, MassPtY_all[j][i]->GetMaximum());
 	    MassPtY_all[j][i]->GetXaxis()->SetRangeUser(0,600);
+	    MassPtY_all[j][i]->GetYaxis()->SetRangeUser(-100, MassPtY_all[j][i]->GetMaximum()+100);
+
 	    MassPtY_all[j][i]->Draw("");
 	    setOPT_text(Form("#it{p_{t} %.0f-%.0f }",(j*PtBinSize),(((j+1)*PtBinSize))) ,0.5,0.9,0.9,0.999,1,0.2);
 
 	    MassPtY_mix[j][i]->GetXaxis()->SetRangeUser(0,600);
+	    MassPtY_mix[j][i]->GetYaxis()->SetRangeUser(-100, MassPtY_all[j][i]->GetMaximum()+100);
+
 	    MassPtY_mix[j][i]->Draw("same");
 	    setOPT_text(Form("#it{p_{t} %.0f-%.0f }",(j*PtBinSize),(((j+1)*PtBinSize))) ,0.5,0.9,0.9,0.999,1,0.2);
 
@@ -284,11 +338,12 @@ void plot_comparison()
 
 
 	    MassPtY_sig[j][i]->GetXaxis()->SetRangeUser(0,600);
+	    MassPtY_sig[j][i]->GetYaxis()->SetRangeUser(-100, MassPtY_all[j][i]->GetMaximum()+100);
+
 	    MassPtY_sig[j][i]->Draw("same");
 	    setOPT_text(Form("#it{p_{t} %.0f-%.0f }",(j*PtBinSize),(((j+1)*PtBinSize))) ,0.5,0.9,0.9,0.999,1,0.2);
 
 	    MassPtY_sig[j][i]->Fit(fh,"RQ");
-	  //  cout<<fh->GetParameter(1)<<"\t"<<fh->GetParameter(2)<<endl;
 	    sig_gaus_3sig_min = fh->GetParameter(1) - (3 * fh->GetParameter(2)) ;
 	    sig_gaus_3sig_max = fh->GetParameter(1) + (3 * fh->GetParameter(2)) ;
 
@@ -299,13 +354,17 @@ void plot_comparison()
 
 	    sig_binMin = MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_min);
 	    sig_binMax = MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_max);
+            sig_gaus_peak[i][j]  = fh->GetParameter(1)   ;
+	    sig_gaus_sigma[i][j] = fh->GetParameter(2)   ;
 
-         //   cout<<sig_peak<<"\t\t"<<sig_binMin <<"\t\t"<<sig_binMax<<"\t"<<MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_min)<<"\t"<<MassPtY_sig[j][i]->FindBin(sig_gaus_3sig_max)<<endl;
+	    // sig_count =   MassPtY_sig[j][i]->Integral(sig_peak-3,sig_peak+3);
 
-	   // sig_count =   MassPtY_sig[j][i]->Integral(sig_peak-3,sig_peak+3);
+	    if ( (sig_gaus_peak[i][j] > 120 && sig_gaus_peak[i][j] < 160) && (sig_binMax - sig_binMin <= 15)  )
+	    {
 
-	    sig_count =   MassPtY_sig[j][i]->Integral(sig_binMin,sig_binMax);
-
+              //  cout<<
+		sig_count =   MassPtY_sig[j][i]->Integral(sig_binMin,sig_binMax);
+	    }
 
 	    if (sig_count>0)
 	    {
@@ -315,18 +374,29 @@ void plot_comparison()
 	}
     }
 
-// PtY_sig->RebinX(2);
 
+    char sig_can_name[8] = "sig_all";
+    daraw_sig_stats(PtY_sig,sig_gaus_peak,sig_gaus_sigma,sig_can_name);
+
+   /*
     Double_t sig_more_binMin=0.;
     Double_t sig_more_binMax=0.;
-    Double_t sig_more_count=0.;
     Double_t sig_more_peak=0;
 
     Double_t sig_less_binMin=0.;
     Double_t sig_less_binMax=0.;
-    Double_t sig_less_count=0.;
     Double_t sig_less_peak=0;
 
+    Double_t sig_gaus_3sig_min_less =0;
+    Double_t sig_gaus_3sig_max_less =0;
+    Double_t sig_gaus_3sig_min_more =0;
+    Double_t sig_gaus_3sig_max_more =0;      */
+    Double_t sig_more_count=0.;
+    Double_t sig_less_count=0.;
+    Int_t sig_gaus_peak_more[2][8][20];
+    Int_t sig_gaus_sigma_more[2][8][20];
+    Int_t sig_gaus_peak_less[2][8][20];
+    Int_t sig_gaus_sigma_less[2][8][20];
 
     for (Int_t c=0; c<2; c++)
     {
@@ -336,10 +406,29 @@ void plot_comparison()
 	    for(Int_t j=0; j<20; j++) // pt
 	    {
 
-		sig_more_peak = MassPtY_More2_sig[c][j][i]->GetMaximumBin();
-		sig_more_binMin = MassPtY_More2_sig[c][j][i]->FindBin(100);
-		sig_more_binMax = MassPtY_More2_sig[c][j][i]->FindBin(200);
-		sig_more_count =   MassPtY_More2_sig[c][j][i]->Integral(sig_more_peak-3,sig_more_peak+3);
+	     //   sig_more_peak = MassPtY_More2_sig[c][j][i]->GetMaximumBin();
+	    //    sig_more_binMin = MassPtY_More2_sig[c][j][i]->FindBin(100);
+	    //    sig_more_binMax = MassPtY_More2_sig[c][j][i]->FindBin(200);
+
+		MassPtY_More2_sig[c][j][i]->Fit(fh,"RQ");
+		sig_gaus_3sig_min = fh->GetParameter(1) - (3 * fh->GetParameter(2)) ;
+		sig_gaus_3sig_max = fh->GetParameter(1) + (3 * fh->GetParameter(2)) ;
+
+
+		sig_binMin = MassPtY_More2_sig[c][j][i]->FindBin(sig_gaus_3sig_min);
+		sig_binMax = MassPtY_More2_sig[c][j][i]->FindBin(sig_gaus_3sig_max);
+		sig_gaus_peak_more[c][i][j]  = fh->GetParameter(1)   ;
+		sig_gaus_sigma_more[c][i][j] = fh->GetParameter(2)   ;
+
+		// sig_count =   MassPtY_sig[j][i]->Integral(sig_peak-3,sig_peak+3);
+
+		//    sig_count =   MassPtY_sig[j][i]->Integral(sig_binMin,sig_binMax);
+
+
+		sig_more_count =   MassPtY_More2_sig[c][j][i]->Integral(sig_binMin,sig_binMax);
+
+
+	       // sig_more_count =   MassPtY_More2_sig[c][j][i]->Integral(sig_more_peak-3,sig_more_peak+3);
 
 	        if (sig_more_count>0)
 		{
@@ -347,12 +436,28 @@ void plot_comparison()
 		}
 		else             PtY_more_sig[c]->SetBinContent(j+1,i+1,0);
 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		sig_less_peak = MassPtY_Less2_sig[c][j][i]->GetMaximumBin();
-		sig_less_binMin = MassPtY_Less2_sig[c][j][i]->FindBin(100);
-		sig_less_binMax = MassPtY_Less2_sig[c][j][i]->FindBin(200);
-		sig_less_count =   MassPtY_Less2_sig[c][j][i]->Integral(sig_less_peak-3,sig_less_peak+3);
+	   //     sig_less_peak = MassPtY_Less2_sig[c][j][i]->GetMaximumBin();
+	    //    sig_less_binMin = MassPtY_Less2_sig[c][j][i]->FindBin(100);
+	    //    sig_less_binMax = MassPtY_Less2_sig[c][j][i]->FindBin(200);
+		//    sig_less_count =   MassPtY_Less2_sig[c][j][i]->Integral(sig_less_peak-3,sig_less_peak+3);
 
+		MassPtY_Less2_sig[c][j][i]->Fit(fh,"RQ");
+		sig_gaus_3sig_min = fh->GetParameter(1) - (3 * fh->GetParameter(2)) ;
+		sig_gaus_3sig_max = fh->GetParameter(1) + (3 * fh->GetParameter(2)) ;
+
+
+		sig_binMin =  MassPtY_Less2_sig[c][j][i]->FindBin(sig_gaus_3sig_min);
+		sig_binMax =  MassPtY_Less2_sig[c][j][i]->FindBin(sig_gaus_3sig_max);
+		sig_gaus_peak_less[c][i][j]  = fh->GetParameter(1)   ;
+		sig_gaus_sigma_less[c][i][j] = fh->GetParameter(2)   ;
+	    //    if ( (sig_gaus_peak_less[c][i][j] > 125 && sig_gaus_peak_less[c][i][j] < 155) && (sig_binMax - sigbinMax <= 15) &&  )
+	   //     {
+
+		    sig_less_count =   MassPtY_Less2_sig[c][j][i]->Integral(sig_binMin,sig_binMax);
+
+	     //   }        |
 	        if (sig_less_count>0)
 		{
 		    PtY_less_sig[c]->SetBinContent(j+1,i+1,sig_less_count);
@@ -361,6 +466,11 @@ void plot_comparison()
 	    }
 	}
     }
+
+    char sig_can_name_more[8] = "sig_mor";
+    daraw_sig_stats(PtY_more_sig[0],sig_gaus_peak_more[0],sig_gaus_sigma_more[0],sig_can_name_more);
+    char sig_can_name_less[8] = "sig_les";
+    daraw_sig_stats(PtY_less_sig[0],sig_gaus_peak_less[0],sig_gaus_sigma_less[0],sig_can_name_less);
 
     TH1F * proj_sig;
     TCanvas* can_proj_sig= new TCanvas("pi_sig_proj","pi_sig_proj") ;
